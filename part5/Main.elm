@@ -70,6 +70,7 @@ view model =
             [ class "search-query"
 
             -- TODO onInput, set the query in the model
+            , onInput (\whatTheUserTyped -> SetQuery "")
             , defaultValue model.query
             ]
             []
