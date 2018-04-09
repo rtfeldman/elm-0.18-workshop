@@ -134,6 +134,13 @@ update msg model =
         SetQuery query ->
             { model | query = query }
 
+        DeleteById idToHide ->
+            let
+                newResults =
+                    List.filter (\{ id } -> id /= idToHide) model.results
+            in
+            { model | results = newResults }
+
         Search ->
             let
                 terms =
@@ -146,10 +153,3 @@ update msg model =
                             [ Include model.query ]
             in
             { model | terms = terms }
-
-        DeleteById idToHide ->
-            let
-                newResults =
-                    List.filter (\{ id } -> id /= idToHide) model.results
-            in
-            { model | results = newResults }
