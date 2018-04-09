@@ -76,7 +76,7 @@ searchFeed terms =
             "https://api.github.com/search/repositories?access_token="
                 ++ Auth.token
                 ++ "&q="
-                ++ String.join "%20" includes
+                ++ String.join "+" includes
                 ++ "+language:elm&sort=stars&order=desc"
 
         -- HINT: responseDecoder may be useful here.
@@ -98,6 +98,16 @@ onlyInclude term =
 
         Exclude _ ->
             Nothing
+
+
+onlyExclude : SearchTerm -> Maybe String
+onlyExclude term =
+    case term of
+        Include _ ->
+            Nothing
+
+        Exclude str ->
+            Just str
 
 
 responseDecoder : Decoder (List SearchResult)
@@ -218,7 +228,9 @@ update msg model =
         HandleSearchResponse result ->
             case result of
                 Ok results ->
-                    ( { model | results = results }, Cmd.none )
+                    ( { model | results = withoutExcludes model.terms results }
+                    , Cmd.none
+                    )
 
                 Err error ->
                     -- TODO if decoding failed, store the message in model.errorMessage
@@ -246,3 +258,19 @@ update msg model =
                     { model | results = newResults }
             in
             ( newModel, Cmd.none )
+
+
+withoutExcludes : List SearchTerm -> List SearchResult -> List SearchResult
+withoutExcludes terms results =
+    let
+        excludes =
+            List.filterMap onlyExclude terms
+
+        containsNoExcludes result =
+            let
+                shouldExclude exclude =
+                    String.contains exclude result.name
+            in
+            not (List.any shouldExclude excludes)
+    in
+    List.filter containsNoExcludes results
