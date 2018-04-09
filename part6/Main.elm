@@ -128,11 +128,11 @@ type Msg
 termsFromQuery : String -> List SearchTerm
 termsFromQuery query =
     case Parser.run searchTerms query of
+        -- TODO if Parser.run returned an Ok containing the List of
+        -- SearchTerm values we want, then return that list!
+        --
+        -- If it returned an Err instead, return [].
         _ ->
-            -- TODO if Parser.run returned an Ok containing the List of
-            -- SearchTerm values we want, then return that list!
-            --
-            -- If it returned an Err instead, return [].
             []
 
 
@@ -150,6 +150,7 @@ update msg model =
             { model | results = newResults }
 
         Search ->
-            -- TODO when the user clicks Search, use `termsFromQuery` and
-            -- the model's current `query` to update the model's `terms`.
+            -- TODO This code runs when the user clicks the Search button.
+            -- Use `termsFromQuery` and the model's current `query` field
+            -- to update the model's `terms` field.
             { model | terms = [] }
