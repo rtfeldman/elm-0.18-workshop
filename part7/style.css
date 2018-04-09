@@ -1,4 +1,3 @@
-
 .content {
   width: 960px;
   margin: 0 auto;
@@ -29,7 +28,7 @@ h1 {
 }
 
 .results {
-  list-style-image: url('http://img-cache.cdn.gaiaonline.com/76bd5c99d8f2236e9d3672510e933fdf/http://i278.photobucket.com/albums/kk81/d3m3nt3dpr3p/Tiny-Star-Icon.png');
+  list-style-image: url("http://img-cache.cdn.gaiaonline.com/76bd5c99d8f2236e9d3672510e933fdf/http://i278.photobucket.com/albums/kk81/d3m3nt3dpr3p/Tiny-Star-Icon.png");
   list-style-position: inside;
   padding: 0;
 }
@@ -66,7 +65,7 @@ a:hover {
   color: white;
   border: 1px solid #ccc;
   background-color: rgb(96, 181, 204);
-  margin-left: 12px
+  margin-left: 12px;
 }
 
 .search-button:hover {
@@ -87,15 +86,34 @@ a:hover {
   color: rgb(96, 181, 204);
 }
 
-button:focus, input:focus {
+button:focus,
+input:focus {
   outline: none;
 }
 
 .error {
-  background-color: #FF9632;
+  background-color: #ff9632;
   padding: 20px;
   box-sizing: border-box;
   overflow-x: auto;
   font-family: monospace;
   font-size: 18px;
+}
+
+.search-terms {
+  font-style: italic;
+}
+
+.search-term {
+  margin-left: 16px;
+  font-weight: bold;
+}
+
+.search-term.included {
+  color: rgb(96, 181, 204);
+}
+
+.search-term.excluded {
+  text-decoration: line-through;
+  color: gray;
 }
