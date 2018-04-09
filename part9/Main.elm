@@ -6,7 +6,7 @@ import Html.Attributes exposing (class, defaultValue, href, property, target)
 import Html.Events exposing (..)
 import Json.Decode exposing (..)
 import Json.Decode.Pipeline exposing (..)
-import Parser exposing (..)
+import Parser exposing ((|.), (|=), Parser, end, ignore, keep, oneOrMore, repeat, symbol, zeroOrMore)
 
 
 type SearchTerm

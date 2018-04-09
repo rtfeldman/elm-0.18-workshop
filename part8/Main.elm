@@ -7,7 +7,7 @@ import Html.Events exposing (..)
 import Http
 import Json.Decode exposing (Decoder)
 import Json.Decode.Pipeline exposing (..)
-import Parser exposing (..)
+import Parser exposing ((|.), (|=), Parser, end, ignore, keep, oneOrMore, repeat, symbol, zeroOrMore)
 
 
 type SearchTerm
