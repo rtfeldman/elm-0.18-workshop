@@ -27,10 +27,7 @@ excludeTerm =
 
 includeTerm : Parser SearchTerm
 includeTerm =
-    Parser.succeed Include
-        |. ignore zeroOrMore isSpace
-        |= keep oneOrMore (\char -> char /= ' ')
-        |. ignore zeroOrMore isSpace
+    Parser.fail "TODO: implement this parser!"
 
 
 searchTerm : Parser SearchTerm
@@ -79,7 +76,7 @@ initialModel : Model
 initialModel =
     { query = "tutorial"
     , results = []
-    , terms = [ Include "tutorial" ]
+    , terms = termsFromQuery "tutorial"
     }
 
 
@@ -128,6 +125,17 @@ type Msg
     | Search
 
 
+termsFromQuery : String -> List SearchTerm
+termsFromQuery query =
+    case Parser.run searchTerms query of
+        _ ->
+            -- TODO if Parser.run returned an Ok containing the List of
+            -- SearchTerm values we want, then return that list!
+            --
+            -- If it returned an Err instead, return [].
+            []
+
+
 update : Msg -> Model -> Model
 update msg model =
     case msg of
@@ -142,14 +150,6 @@ update msg model =
             { model | results = newResults }
 
         Search ->
-            let
-                terms =
-                    case Parser.run searchTerms model.query of
-                        Ok validTerms ->
-                            validTerms
-
-                        Err invalidTerms ->
-                            -- Fall back on using the whole query
-                            [ Include model.query ]
-            in
-            { model | terms = terms }
+            -- TODO when the user clicks Search, use `termsFromQuery` and
+            -- the model's current `query` to update the model's `terms`.
+            { model | terms = [] }

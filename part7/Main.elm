@@ -96,7 +96,7 @@ initialModel : Model
 initialModel =
     { query = "tutorial"
     , results = decodeResults SampleResponse.json
-    , terms = [ Include "tutorial" ]
+    , terms = termsFromQuery "tutorial"
     }
 
 
@@ -169,6 +169,16 @@ type Msg
     | Search
 
 
+termsFromQuery : String -> List SearchTerm
+termsFromQuery query =
+    case Parser.run searchTerms query of
+        Ok validTerms ->
+            validTerms
+
+        Err invalidTerms ->
+            []
+
+
 update : Msg -> Model -> Model
 update msg model =
     case msg of
@@ -183,14 +193,4 @@ update msg model =
             { model | results = newResults }
 
         Search ->
-            let
-                terms =
-                    case Parser.run searchTerms model.query of
-                        Ok validTerms ->
-                            validTerms
-
-                        Err invalidTerms ->
-                            -- Fall back on using the whole query
-                            [ Include model.query ]
-            in
-            { model | terms = terms }
+            { model | terms = termsFromQuery model.query }
