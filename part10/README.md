@@ -1,5 +1,5 @@
-Part 10
-=======
+Part 9
+======
 
 ## Installation
 
@@ -37,4 +37,6 @@ Then visit [localhost:8000](http://localhost:8000) and choose `HtmlRunner.elm`.
 
 ## References
 
-* [Html.map](http://package.elm-lang.org/packages/elm-lang/html/1.1.0/Html#map)
+* [Using Elm packages](https://github.com/elm-lang/elm-package/blob/master/README.md#basic-usage)
+* [elm-test documentation](http://package.elm-lang.org/packages/elm-community/elm-test/latest)
+* [`(<|)` documentation](http://package.elm-lang.org/packages/elm-lang/core/latest/Basics#<|)

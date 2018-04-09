@@ -2,11 +2,20 @@ port module ElmHub exposing (..)
 
 import Auth
 import Html exposing (..)
-import Html.Attributes exposing (checked, class, defaultValue, href, placeholder, target, type_, value)
+import Html.Attributes exposing (class, defaultValue, href, property, target)
 import Html.Events exposing (..)
 import Json.Decode exposing (Decoder)
 import Json.Decode.Pipeline exposing (..)
-import String
+
+
+getQueryString : String -> String
+getQueryString query =
+    -- See https://developer.github.com/v3/search/#example for how to customize!
+    "access_token="
+        ++ Auth.token
+        ++ "&q="
+        ++ query
+        ++ "+language:elm&sort=stars&order=desc"
 
 
 responseDecoder : Decoder (List SearchResult)
@@ -26,15 +35,6 @@ type alias Model =
     { query : String
     , results : List SearchResult
     , errorMessage : Maybe String
-    , options : SearchOptions
-    }
-
-
-type alias SearchOptions =
-    { minStars : Int
-    , minStarsError : Maybe String
-    , searchIn : String
-    , userFilter : String
     }
 
 
@@ -50,102 +50,17 @@ initialModel =
     { query = "tutorial"
     , results = []
     , errorMessage = Nothing
-    , options =
-        { minStars = 0
-        , minStarsError = Nothing
-        , searchIn = "name"
-        , userFilter = ""
-        }
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( initialModel, githubSearch (getQueryString initialModel) )
+    ( initialModel, githubSearch (getQueryString initialModel.query) )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     githubResponse decodeResponse
-
-
-viewMinStarsError : Maybe String -> Html msg
-viewMinStarsError message =
-    case message of
-        Nothing ->
-            text " "
-
-        Just errorMessage ->
-            div [ class "stars-error" ] [ text errorMessage ]
-
-
-type Msg
-    = Search
-      -- TODO add a constructor for Options OptionsMsg
-    | SetQuery String
-    | DeleteById Int
-    | HandleSearchResponse (List SearchResult)
-    | HandleSearchError (Maybe String)
-    | DoNothing
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        -- TODO Add a branch for Options which updates model.options
-        --
-        -- HINT: calling updateOptions will save a lot of time here!
-        Search ->
-            ( model, githubSearch (getQueryString model) )
-
-        SetQuery query ->
-            ( { model | query = query }, Cmd.none )
-
-        HandleSearchResponse results ->
-            ( { model | results = results }, Cmd.none )
-
-        HandleSearchError error ->
-            ( { model | errorMessage = error }, Cmd.none )
-
-        DeleteById idToHide ->
-            let
-                newResults =
-                    model.results
-                        |> List.filter (\{ id } -> id /= idToHide)
-
-                newModel =
-                    { model | results = newResults }
-            in
-            ( newModel, Cmd.none )
-
-        DoNothing ->
-            ( model, Cmd.none )
-
-
-onBlurWithTargetValue : (String -> msg) -> Attribute msg
-onBlurWithTargetValue toMsg =
-    on "blur" (Json.Decode.map toMsg targetValue)
-
-
-updateOptions : OptionsMsg -> SearchOptions -> SearchOptions
-updateOptions optionsMsg options =
-    case optionsMsg of
-        SetMinStars minStarsStr ->
-            case String.toInt minStarsStr of
-                Ok minStars ->
-                    { options | minStars = minStars, minStarsError = Nothing }
-
-                Err _ ->
-                    { options
-                        | minStarsError =
-                            Just "Must be an integer!"
-                    }
-
-        SetSearchIn searchIn ->
-            { options | searchIn = searchIn }
-
-        SetUserFilter userFilter ->
-            { options | userFilter = userFilter }
 
 
 view : Model -> Html Msg
@@ -155,13 +70,8 @@ view model =
             [ h1 [] [ text "ElmHub" ]
             , span [ class "tagline" ] [ text "Like GitHub, but for Elm things." ]
             ]
-        , div [ class "search" ]
-            [ text "TODO call viewOptions here. Use Html.map to avoid a type mismatch!"
-            , div [ class "search-input" ]
-                [ input [ class "search-query", onInput SetQuery, defaultValue model.query ] []
-                , button [ class "search-button", onClick Search ] [ text "Search" ]
-                ]
-            ]
+        , input [ class "search-query", onInput SetQuery, defaultValue model.query ] []
+        , button [ class "search-button", onClick Search ] [ text "Search" ]
         , viewErrorMessage model.errorMessage
         , ul [ class "results" ] (List.map viewSearchResult model.results)
         ]
@@ -188,44 +98,43 @@ viewSearchResult result =
         ]
 
 
-type OptionsMsg
-    = SetMinStars String
-    | SetSearchIn String
-    | SetUserFilter String
+type Msg
+    = Search
+    | SetQuery String
+    | DeleteById Int
+    | HandleSearchResponse (List SearchResult)
+    | HandleSearchError (Maybe String)
+    | DoNothing
 
 
-viewOptions : SearchOptions -> Html OptionsMsg
-viewOptions opts =
-    div [ class "search-options" ]
-        [ div [ class "search-option" ]
-            [ label [ class "top-label" ] [ text "Search in" ]
-            , select [ onChange SetSearchIn, value opts.searchIn ]
-                [ option [ value "name" ] [ text "Name" ]
-                , option [ value "description" ] [ text "Description" ]
-                , option [ value "name,description" ] [ text "Name and Description" ]
-                ]
-            ]
-        , div [ class "search-option" ]
-            [ label [ class "top-label" ] [ text "Owned by" ]
-            , input
-                [ type_ "text"
-                , placeholder "Enter a username"
-                , defaultValue opts.userFilter
-                , onInput SetUserFilter
-                ]
-                []
-            ]
-        , div [ class "search-option" ]
-            [ label [ class "top-label" ] [ text "Minimum Stars" ]
-            , input
-                [ type_ "text"
-                , onBlurWithTargetValue SetMinStars
-                , defaultValue (toString opts.minStars)
-                ]
-                []
-            , viewMinStarsError opts.minStarsError
-            ]
-        ]
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        Search ->
+            ( model, githubSearch (getQueryString model.query) )
+
+        SetQuery query ->
+            ( { model | query = query }, Cmd.none )
+
+        HandleSearchResponse results ->
+            ( { model | results = results }, Cmd.none )
+
+        HandleSearchError error ->
+            ( { model | errorMessage = error }, Cmd.none )
+
+        DeleteById idToHide ->
+            let
+                newResults =
+                    model.results
+                        |> List.filter (\{ id } -> id /= idToHide)
+
+                newModel =
+                    { model | results = newResults }
+            in
+            ( newModel, Cmd.none )
+
+        DoNothing ->
+            ( model, Cmd.none )
 
 
 decodeGithubResponse : Json.Decode.Value -> Msg
@@ -236,11 +145,6 @@ decodeGithubResponse value =
 
         Err err ->
             HandleSearchError (Just err)
-
-
-onChange : (String -> msg) -> Attribute msg
-onChange toMsg =
-    on "change" (Json.Decode.map toMsg Html.Events.targetValue)
 
 
 decodeResponse : Json.Decode.Value -> Msg
@@ -257,45 +161,3 @@ port githubSearch : String -> Cmd msg
 
 
 port githubResponse : (Json.Decode.Value -> msg) -> Sub msg
-
-
-{-| NOTE: The following is not part of the exercise, but is food for thought if
-you have extra time.
-
-There are several opportunities to improve this getQueryString implementation.
-A nice refactor of this would not change the type annotation! It would still be:
-
-getQueryString : Model -> String
-
-Try identifying patterns and writing helper functions which are responsible for
-handling those patterns. Then have this function call them. Things to consider:
-
-  - There's pattern of adding "+foo:bar" - could we write a helper function for this?
-  - In one case, if the "bar" in "+foo:bar" is empty, we want to return "" instead
-    of "+foo:" - is this always true? Should our helper function always do that?
-  - We also join query parameters together with "=" and "&" a lot. Can we give
-    that pattern a similar treatment? Should we also take "?" into account?
-
-If you have time, give this refactor a shot and see how it turns out!
-
-Writing something out the long way like this, and then refactoring to something
-nicer, is generally the preferred way to go about building things in Elm.
-
--}
-getQueryString : Model -> String
-getQueryString model =
-    -- See https://developer.github.com/v3/search/#example for how to customize!
-    "access_token="
-        ++ Auth.token
-        ++ "&q="
-        ++ model.query
-        ++ "+in:"
-        ++ model.options.searchIn
-        ++ "+stars:>="
-        ++ toString model.options.minStars
-        ++ "+language:elm"
-        ++ (if String.isEmpty model.options.userFilter then
-                ""
-            else
-                "+user:" ++ model.options.userFilter
-           )

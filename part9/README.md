@@ -1,4 +1,4 @@
-Part 9
+Part 8
 ======
 
 ## Installation
@@ -16,27 +16,7 @@ elm-package install
 elm-live Main.elm --open --output=elm.js
 ```
 
-## Running Tests
-
-Do either (or both!) of the following:
-
-#### Running tests on the command line
-
-```bash
-elm-test
-```
-
-#### Running tests in a browser
-
-```bash
-cd tests
-elm-reactor
-```
-
-Then visit [localhost:8000](http://localhost:8000) and choose `HtmlRunner.elm`.
-
 ## References
 
-* [Using Elm packages](https://github.com/elm-lang/elm-package/blob/master/README.md#basic-usage)
-* [elm-test documentation](http://package.elm-lang.org/packages/elm-community/elm-test/latest)
-* [`(<|)` documentation](http://package.elm-lang.org/packages/elm-lang/core/latest/Basics#<|)
+* [JavaScript interop](http://guide.elm-lang.org/interop/javascript.html)
+* [github.js](https://github.com/michael/github)

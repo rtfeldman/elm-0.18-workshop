@@ -1,10 +1,11 @@
-port module Main exposing (..)
+module Main exposing (..)
 
 import Auth
 import Html exposing (..)
 import Html.Attributes exposing (class, defaultValue, href, property, target)
 import Html.Events exposing (..)
-import Json.Decode exposing (..)
+import Http
+import Json.Decode exposing (Decoder)
 import Json.Decode.Pipeline exposing (..)
 
 
@@ -13,19 +14,30 @@ main =
     Html.program
         { view = view
         , update = update
-        , init = ( initialModel, githubSearch (getQueryString initialModel.query) )
-        , subscriptions = \_ -> githubResponse decodeResponse
+        , init = ( initialModel, searchFeed initialModel.query )
+        , subscriptions = \_ -> Sub.none
         }
 
 
-getQueryString : String -> String
-getQueryString query =
-    -- See https://developer.github.com/v3/search/#example for how to customize!
-    "access_token="
-        ++ Auth.token
-        ++ "&q="
-        ++ query
-        ++ "+language:elm&sort=stars&order=desc"
+searchFeed : String -> Cmd Msg
+searchFeed query =
+    let
+        url =
+            "https://api.github.com/search/repositories?access_token="
+                ++ Auth.token
+                ++ "&q="
+                ++ query
+                ++ "+language:elm&sort=stars&order=desc"
+
+        -- HINT: responseDecoder may be useful here.
+        request =
+            "TODO replace this String with a Request built using http://package.elm-lang.org/packages/elm-lang/http/latest/Http#get"
+    in
+    -- TODO replace this Cmd.none with a call to Http.send
+    -- http://package.elm-lang.org/packages/elm-lang/http/latest/Http#send
+    --
+    -- HINT: request and HandleSearchResponse may be useful here.
+    Cmd.none
 
 
 responseDecoder : Decoder (List SearchResult)
@@ -98,51 +110,47 @@ viewSearchResult result =
         ]
 
 
+type Msg
+    = Search
+    | SetQuery String
+    | DeleteById Int
+    | HandleSearchResponse (Result Http.Error (List SearchResult))
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Search ->
-            ( model, githubSearch (getQueryString model.query) )
+            ( model, searchFeed model.query )
+
+        HandleSearchResponse result ->
+            case result of
+                Ok results ->
+                    ( { model | results = results }, Cmd.none )
+
+                Err error ->
+                    -- TODO if decoding failed, store the message in model.errorMessage
+                    --
+                    -- HINT 1: Remember, model.errorMessage is a Maybe String - so it
+                    -- can only be set to either Nothing or (Just "some string here")
+                    --
+                    -- Hint 2: look for "decode" in the documentation for this union type:
+                    -- http://package.elm-lang.org/packages/elm-lang/http/latest/Http#Error
+                    --
+                    -- Hint 3: to check if this is working, break responseDecoder
+                    -- by changing "stargazers_count" to "description"
+                    ( model, Cmd.none )
 
         SetQuery query ->
             ( { model | query = query }, Cmd.none )
 
-        HandleSearchResponse results ->
-            ( { model | results = results }, Cmd.none )
-
-        HandleSearchError error ->
-            ( { model | errorMessage = error }, Cmd.none )
-
-        DeleteById idToDelete ->
+        DeleteById idToHide ->
             let
                 newResults =
                     model.results
-                        |> List.filter (\{ id } -> id /= idToDelete)
+                        |> List.filter (\{ id } -> id /= idToHide)
 
                 newModel =
                     { model | results = newResults }
             in
             ( newModel, Cmd.none )
-
-
-type Msg
-    = Search
-    | SetQuery String
-    | DeleteById Int
-    | HandleSearchResponse (List SearchResult)
-    | HandleSearchError (Maybe String)
-
-
-decodeResponse : Value -> Msg
-decodeResponse json =
-    -- TODO use decodeValue to decode the response into a Msg.
-    --
-    -- Hint: look at the definition of Msg and
-    -- the definition of responseDecoder
-    HandleSearchError (Just "TODO decode the response!")
-
-
-port githubSearch : String -> Cmd msg
-
-
-port githubResponse : (Value -> msg) -> Sub msg

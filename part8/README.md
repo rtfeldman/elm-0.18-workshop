@@ -1,4 +1,4 @@
-Part 8
+Part 7
 ======
 
 ## Installation
@@ -18,5 +18,6 @@ elm-live Main.elm --open --output=elm.js
 
 ## References
 
-* [JavaScript interop](http://guide.elm-lang.org/interop/javascript.html)
-* [github.js](https://github.com/michael/github)
+* [Running Effects](http://guide.elm-lang.org/architecture/effects/)
+* [HTTP Error documentation](http://package.elm-lang.org/packages/evancz/elm-http/3.0.0/Http#Error)
+* [Modules syntax reference](http://elm-lang.org/docs/syntax#modules)

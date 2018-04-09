@@ -1,4 +1,4 @@
-Part 7
+Part 6
 ======
 
 ## Installation
@@ -18,6 +18,5 @@ elm-live Main.elm --open --output=elm.js
 
 ## References
 
-* [Running Effects](http://guide.elm-lang.org/architecture/effects/)
-* [HTTP Error documentation](http://package.elm-lang.org/packages/evancz/elm-http/3.0.0/Http#Error)
-* [Modules syntax reference](http://elm-lang.org/docs/syntax#modules)
+* [JSON decoding](http://guide.elm-lang.org/interop/json.html)
+* [`elm-decode-pipeline` documentation](http://package.elm-lang.org/packages/NoRedInk/elm-decode-pipeline/latest)

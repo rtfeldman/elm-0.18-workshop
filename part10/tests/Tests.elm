@@ -18,12 +18,11 @@ all =
                         """{ "pizza": [] }"""
 
                     isErrorResult result =
-                        case result of
-                            Err _ ->
-                                True
-
-                            Ok _ ->
-                                False
+                        -- TODO return True if the given Result is an Err of some sort,
+                        -- and False if it is an Ok of some sort.
+                        --
+                        -- Result docs: http://package.elm-lang.org/packages/elm-lang/core/latest/Result
+                        False
                 in
                 json
                     |> decodeString responseDecoder
@@ -32,8 +31,7 @@ all =
         , test "it successfully decodes a valid response" <|
             \() ->
                 """{ "items": [
-                    { "id": 5, "full_name": "foo", "stargazers_count": 42 },
-                    { "id": 3, "full_name": "bar", "stargazers_count": 77 }
+                    /* TODO: put JSON here! */
                  ] }"""
                     |> decodeString responseDecoder
                     |> Expect.equal
@@ -42,9 +40,17 @@ all =
                             , { id = 3, name = "bar", stars = 77 }
                             ]
                         )
-        , fuzz (list int) "it decodes one SearchResult for each 'item' in the JSON" <|
-            \ids ->
+        , test "it decodes one SearchResult for each 'item' in the JSON" <|
+            \() ->
                 let
+                    -- TODO convert this to a fuzz test that generates a random
+                    -- list of ids instead of this hardcoded list of three ids.
+                    --
+                    -- fuzz test docs: http://package.elm-lang.org/packages/elm-community/elm-test/latest/Test#fuzz
+                    -- Fuzzer docs: http://package.elm-lang.org/packages/project-fuzzball/test/6.0.0
+                    ids =
+                        [ 12, 5, 76 ]
+
                     jsonFromId id =
                         """{"id": """ ++ toString id ++ """, "full_name": "foo", "stargazers_count": 42}"""
 
