@@ -25,7 +25,6 @@ excludeTerm =
         |. ignore zeroOrMore isSpace
         |. symbol "-"
         |= keep oneOrMore (\char -> char /= ' ')
-        |. ignore zeroOrMore isSpace
 
 
 includeTerm : Parser SearchTerm
@@ -33,7 +32,6 @@ includeTerm =
     Parser.succeed Include
         |. ignore zeroOrMore isSpace
         |= keep oneOrMore (\char -> char /= ' ')
-        |. ignore zeroOrMore isSpace
 
 
 searchTerm : Parser SearchTerm
@@ -47,6 +45,7 @@ searchTerm =
 searchTerms : Parser (List SearchTerm)
 searchTerms =
     repeat zeroOrMore searchTerm
+        |. ignore zeroOrMore isSpace
         |. end
 
 
