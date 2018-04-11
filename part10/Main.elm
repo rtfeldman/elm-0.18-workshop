@@ -36,7 +36,7 @@ responseDecoder =
 
 searchResultDecoder : Decoder SearchResult
 searchResultDecoder =
-    decode SearchResult
+    Json.Decode.succeed SearchResult
         |> required "id" Json.Decode.int
         |> required "full_name" Json.Decode.string
         |> required "stargazers_count" Json.Decode.int

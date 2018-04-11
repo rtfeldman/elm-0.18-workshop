@@ -71,7 +71,7 @@ searchResultDecoder =
     -- Look in SampleResponse.elm to see the exact JSON we'll be decoding!
     --
     -- TODO replace these calls to `hardcoded` with calls to `required`
-    decode SearchResult
+    Json.Decode.succeed SearchResult
         |> hardcoded 0
         |> hardcoded ""
         |> hardcoded 0
