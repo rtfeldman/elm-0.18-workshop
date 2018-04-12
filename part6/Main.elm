@@ -35,18 +35,13 @@ searchTerm =
         [ excludeTerm
         , includeTerm
         ]
+        |. ignore zeroOrMore isSpace
 
 
 searchTerms : Parser (List SearchTerm)
 searchTerms =
     repeat zeroOrMore searchTerm
-        |. ignore zeroOrMore isSpace
         |. end
-
-
-spaces : Parser ()
-spaces =
-    ignore zeroOrMore (\c -> c == ' ')
 
 
 main : Program Never Model Msg
