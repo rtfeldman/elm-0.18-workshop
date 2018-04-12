@@ -52,15 +52,20 @@ viewSearchResult result =
         , a [ href ("https://github.com/" ++ result.name), target "_blank" ]
             [ text result.name ]
         , button
-            -- TODO add an onClick handler that sends a "DELETE_BY_ID" msg
+            -- TODO add an onClick handler that sends a "DELETE_BY_ID" msg.
+            --
+            -- HINT: The msg should look something like this:
+            --
+            -- { operation = "DELETE_BY_ID", data = (...put the ID here...) }
             [ class "hide-result" ]
             [ text "X" ]
         ]
 
 
 update msg model =
-    -- TODO if msg.operation == "DELETE_BY_ID",
-    -- then return a new model without the given ID present anymore.
+    -- TODO if msg.operation == "DELETE_BY_ID", then
+    -- use List.filter to return a new model
+    -- without the given ID present anymore.
     model
 
 
