@@ -69,8 +69,7 @@ view model =
         , input
             [ class "search-query"
 
-            -- TODO onInput, set the query in the model
-            , onInput (\whatTheUserTyped -> SetQuery "")
+            -- TODO add an onInput handler that sends a SetQuery msg
             , defaultValue model.query
             ]
             []
@@ -95,7 +94,14 @@ viewSearchResult result =
 update : Msg -> Model -> Model
 update msg model =
     -- TODO if we get a SetQuery msg, use it to set the model's query field,
-    -- and if we get a DeleteById msg, delete the appropriate result
+    -- and if we get a DeleteById msg, delete the appropriate result.
+    --
+    -- HINT: Use record update syntax to update only the field you care about!
+    --
+    -- { model | query = ... }
+    --
+    -- { model | results = ... }
+
     model
 
 
