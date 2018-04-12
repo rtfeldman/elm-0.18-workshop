@@ -30,7 +30,7 @@ Then re-run step 4.
 Run this at the terminal:
 
 ```bash
-git clone https://github.com/rtfeldman/elm-workshop.git
+git clone https://github.com/rtfeldman/elm-0.18-workshop.git
 cd elm-workshop
 ```
 
