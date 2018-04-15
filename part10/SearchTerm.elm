@@ -67,7 +67,6 @@ isSpace char =
 excludeTerm : Parser SearchTerm
 excludeTerm =
     Parser.succeed Exclude
-        |. ignore zeroOrMore isSpace
         |. symbol "-"
         |= keep oneOrMore (\char -> char /= ' ')
 
@@ -75,22 +74,22 @@ excludeTerm =
 includeTerm : Parser SearchTerm
 includeTerm =
     Parser.succeed Include
-        |. ignore zeroOrMore isSpace
         |= keep oneOrMore (\char -> char /= ' ')
 
 
 searchTerm : Parser SearchTerm
 searchTerm =
-    Parser.oneOf
-        [ excludeTerm
-        , includeTerm
-        ]
+    delayedCommit (ignore zeroOrMore isSpace) <|
+        Parser.oneOf
+            [ excludeTerm
+            , includeTerm
+            ]
+            |. ignore zeroOrMore isSpace
 
 
 searchTerms : Parser (List SearchTerm)
 searchTerms =
     repeat zeroOrMore searchTerm
-        |. ignore zeroOrMore isSpace
         |. end
 
 

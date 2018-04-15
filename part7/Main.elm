@@ -21,10 +21,10 @@ isSpace char =
 
 excludeTerm : Parser SearchTerm
 excludeTerm =
-    Parser.succeed Exclude
-        |. ignore zeroOrMore isSpace
-        |. symbol "-"
-        |= keep oneOrMore (\char -> char /= ' ')
+    delayedCommit (ignore zeroOrMore isSpace) <|
+        Parser.succeed Exclude
+            |. symbol "-"
+            |= keep oneOrMore (\char -> char /= ' ')
 
 
 includeTerm : Parser SearchTerm
@@ -40,18 +40,13 @@ searchTerm =
         [ excludeTerm
         , includeTerm
         ]
+        |. ignore zeroOrMore isSpace
 
 
 searchTerms : Parser (List SearchTerm)
 searchTerms =
     repeat zeroOrMore searchTerm
-        |. ignore zeroOrMore isSpace
         |. end
-
-
-spaces : Parser ()
-spaces =
-    ignore zeroOrMore (\c -> c == ' ')
 
 
 main : Program Never Model Msg
