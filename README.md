@@ -33,7 +33,7 @@ Run this at the terminal:
 
 ```shell
 git clone https://github.com/rtfeldman/elm-0.18-workshop.git
-cd elm-workshop
+cd elm-0.18-workshop
 ```
 
 > **Note:** Tab characters are syntax errors in Elm code, so if your editor uses them for indentation, definitely switch it to spaces for this workshop!
