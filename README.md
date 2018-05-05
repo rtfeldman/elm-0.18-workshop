@@ -32,7 +32,7 @@ It should print `0.18.0` if everything worked!
 Run this at the terminal:
 
 ```shell
-git clone https://github.com/rtfeldman/elm-0.18-workshop.git
+git clone https://github.com/rtfeldman/elm-0.18-workshop.git elm-workshop
 cd elm-0.18-workshop
 ```
 
